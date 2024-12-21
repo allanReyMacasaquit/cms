@@ -31,7 +31,7 @@ const AuthPage = () => {
 						<p className='text-sm text-gray-500 mb-6'>
 							Sign in to access your account and explore amazing features.
 						</p>
-						<SignInButton redirecturl='/'>
+						<SignInButton forceRedirectUrl='/'>
 							<button className='w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-300'>
 								Sign In
 							</button>

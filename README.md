@@ -42,3 +42,7 @@ Follow: https://orm.drizzle.team/docs/tutorials/drizzle-with-neon
 ## Clerk Authentication
 
 Follow: https://clerk.com/docs/quickstarts/nextjs
+
+## Shadcn Form
+
+Follow: https://ui.shadcn.com/docs/components/form

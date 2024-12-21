@@ -38,3 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Drizzle with Neon Database
 
 Follow: https://orm.drizzle.team/docs/tutorials/drizzle-with-neon
+
+## Clerk Authentication
+
+Follow: https://clerk.com/docs/quickstarts/nextjs

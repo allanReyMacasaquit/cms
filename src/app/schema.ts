@@ -4,8 +4,8 @@ export const store = pgTable('store', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	userId: text('user_id').notNull(),
-	createdAt: timestamp('created_At').defaultNow(),
-	updatedAt: timestamp('updated_At').defaultNow(),
+	createdAt: timestamp('created_at').defaultNow(),
+	updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 // export const postsTable = pgTable('posts_table', {

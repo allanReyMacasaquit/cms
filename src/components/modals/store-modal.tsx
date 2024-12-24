@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
 	name: z.string().min(1),
@@ -16,7 +17,7 @@ const formSchema = z.object({
 
 export const StoreModal = () => {
 	const storeModal = useStoreModal();
-
+	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 
 	const form = useForm({
@@ -29,18 +30,15 @@ export const StoreModal = () => {
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		try {
 			setLoading(true);
-			const res = await axios.post('/api/stores', values);
-			console.log(res.data);
-			toast.success('Store created');
+			await axios.post('/api/stores', values);
+			router.refresh();
+			toast.success('Store successfully created');
 		} catch (error) {
 			console.log(error);
 			toast.error('Something went wrong');
 		} finally {
 			setLoading(false);
 		}
-
-		console.log(values);
-		storeModal.onClose();
 	};
 
 	return (

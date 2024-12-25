@@ -13,6 +13,11 @@ export function MainNav({
 
 	const routes = [
 		{
+			href: `/${params.storeId}`,
+			label: 'Overview',
+			active: pathname === `/${params.storeId}`,
+		},
+		{
 			href: `/${params.storeId}/settings`,
 			label: 'Settings',
 			active: pathname === `/${params.storeId}/settings`,
@@ -22,7 +27,7 @@ export function MainNav({
 	return (
 		<nav
 			className={cn(
-				'flex items-center rounded-md bg-white px-2 space-x-4 lg:space-x-6',
+				'flex items-center rounded-md bg-white p-2 md:p-0 md:px-2 space-x-4 lg:space-x-6',
 				className
 			)}
 			{...props}
@@ -32,8 +37,8 @@ export function MainNav({
 					key={route.href}
 					href={route.href}
 					className={cn(
-						'transition-colors flex items-center text-black hover:bg-',
-						route.active ? 'text-black dark:text-white' : 'text-black'
+						'transition-colors flex items-center text-black',
+						route.active ? ' dark:text-white' : 'text-zinc-400 '
 					)}
 				>
 					{route.label}

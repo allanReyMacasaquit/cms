@@ -18,10 +18,10 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
-interface Props {
-	initialData: typeof store.$inferSelect;
-}
+import axios from 'axios'; // Import axios
+import toast from 'react-hot-toast';
+import { useParams, useRouter } from 'next/navigation';
+import AlertModal from '@/components/modals/alert-modal';
 
 // Zod Schema
 const settingsSchema = z.object({
@@ -30,9 +30,16 @@ const settingsSchema = z.object({
 
 type SettingsFormValues = z.infer<typeof settingsSchema>;
 
+interface Props {
+	initialData: typeof store.$inferSelect;
+}
+
+// Settings Form Component
 const SettingsForm = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
+	const params = useParams();
+	const router = useRouter();
 
 	const form = useForm<SettingsFormValues>({
 		resolver: zodResolver(settingsSchema),
@@ -44,17 +51,48 @@ const SettingsForm = ({ initialData }: Props) => {
 	const onSubmit = async (data: SettingsFormValues) => {
 		setLoading(true);
 		try {
-			console.log('Form submitted:', data);
-			// Add logic to update the database here
+			const response = await axios.patch(`/api/stores/${params.storeId}`, data);
+			router.refresh();
+			if (response.status === 200) {
+				toast.success('Store updated successfully');
+			} else {
+				toast.error('Error updating store:', response.data);
+			}
 		} catch (error) {
 			console.error('Failed to update settings:', error);
 		} finally {
 			setLoading(false);
 		}
 	};
+	// Delete store
+	const onDelete = async () => {
+		setLoading(true);
+		try {
+			const response = await axios.delete(`/api/stores/${params.storeId}`);
+			if (response.status === 200) {
+				toast.success('Store deleted successfully');
+				router.refresh();
+				router.push('/');
+			} else {
+				toast.error('Error deleting store:', response.data);
+			}
+		} catch (error) {
+			console.error('Failed to delete store:', error);
+			toast.error('An error occurred while deleting the store.');
+		} finally {
+			setLoading(false);
+			setOpen(false);
+		}
+	};
 
 	return (
 		<>
+			<AlertModal
+				isOpen={open}
+				loading={loading}
+				onClose={() => setOpen(false)}
+				onConfirm={onDelete}
+			/>
 			<div className='flex items-center justify-between'>
 				<Heading title='Settings' description='Manage Store Preferences' />
 				<Button

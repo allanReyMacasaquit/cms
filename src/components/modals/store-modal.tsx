@@ -65,14 +65,7 @@ export const StoreModal = () => {
 					<div className='flex items-center justify-between mt-4'>
 						<Button
 							disabled={loading}
-							variant='outline'
-							onClick={storeModal.onClose}
-						>
-							Cancel
-						</Button>
-						<Button
-							disabled={loading}
-							className='bg-gradient-to-r from-blue-500 to-purple-600'
+							className='bg-gradient-to-r from-blue-500 to-purple-600 w-full'
 							type='submit'
 						>
 							Continue

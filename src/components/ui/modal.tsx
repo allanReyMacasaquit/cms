@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({
 				<div className='mt-4'>{children}</div>
 				<DialogClose asChild>
 					<button
-						className='mt-6 w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300'
+						className='w-full px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-400 to-teal-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300'
 						aria-label='Close'
 					>
 						Close

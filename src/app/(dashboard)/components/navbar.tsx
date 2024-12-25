@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { UserButton } from '@clerk/nextjs';
 import { MainNav } from './main-navbar';
 import { Switcher } from './switcher';
@@ -14,6 +13,7 @@ import {
 	SheetTrigger,
 } from '@/components/ui/sheet';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import Image from 'next/image';
 
 const Navbar = async () => {
 	const { userId } = await auth();
@@ -35,10 +35,12 @@ const Navbar = async () => {
 			<div className='max-w-7xl mx-auto'>
 				<nav className='flex items-center justify-between p-2 text-white'>
 					{/* Logo */}
-					<div className='text-xl font-semibold px-2'>
-						<Link className='hover:text-gray-200' href='/'>
-							Home
-						</Link>
+
+					<div className='flex items-center space-x-2 text-xl font-semibold px-2'>
+						<Image src='/logo.svg' alt='logo' height={50} width={50} priority />
+						<div className='md:hidden flex'>
+							<MainNav />
+						</div>
 					</div>
 
 					{/* Desktop Menu */}
@@ -62,7 +64,6 @@ const Navbar = async () => {
 								<SheetHeader className='mt-6'>
 									<div className='flex items-center justify-between p-4 mb-4 bg-gradient-to-r from-blue-500 to-purple-600'>
 										<UserButton afterSwitchSessionUrl='/auth' />
-										<MainNav />
 									</div>
 
 									<VisuallyHidden>

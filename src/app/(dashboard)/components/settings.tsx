@@ -22,6 +22,7 @@ import axios from 'axios'; // Import axios
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
 import AlertModal from '@/components/modals/alert-modal';
+import { ApiAlert } from '@/components/api-alert';
 
 // Zod Schema
 const settingsSchema = z.object({
@@ -135,6 +136,12 @@ const SettingsForm = ({ initialData }: Props) => {
 					</Button>
 				</form>
 			</Form>
+			<Separator />
+			<ApiAlert
+				title='NEXT_PUBLIC_API_URL'
+				description={`${origin}/api/${params.storeId}`}
+				variant='public'
+			/>
 		</>
 	);
 };

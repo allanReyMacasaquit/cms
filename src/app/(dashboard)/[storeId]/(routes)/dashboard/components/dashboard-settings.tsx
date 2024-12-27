@@ -28,7 +28,7 @@ import { Textarea } from '@/components/ui/textarea';
 // Zod Schema
 const settingsSchema = z.object({
 	label: z.string().nonempty('Name is required'),
-	description: z.string().optional(),
+	description: z.string().nonempty('Description is Required'),
 	imageUrl: z.string().nonempty('Image is Required'),
 });
 
@@ -45,7 +45,10 @@ const DashboardSettings = ({ initialData }: Props) => {
 	const params = useParams();
 	const router = useRouter();
 
-	const title = !initialData ? 'Edit Dashboard' : 'Create Dashboard';
+	const title = initialData ? 'Edit Dashboard' : 'Create Dashboard';
+	const toastMessage = initialData
+		? 'Edited image successfully'
+		: 'Created image successfully';
 
 	const form = useForm<DashboardFormValues>({
 		resolver: zodResolver(settingsSchema),
@@ -59,16 +62,17 @@ const DashboardSettings = ({ initialData }: Props) => {
 	const onSubmit = async (data: DashboardFormValues) => {
 		setLoading(true);
 		try {
-			const response = await axios.patch(
-				`/api/dashboard/${params.dashboardId}`,
-				data
-			);
-			router.refresh();
-			if (response.status === 200) {
-				toast.success('Store updated successfully');
+			if (initialData) {
+				await axios.patch(
+					`/api/${params.storeId}/dashboard/${params.billboardId}`,
+					data
+				);
 			} else {
-				toast.error('Error updating store:', response.data);
+				await axios.post(`/api/${params.storeId}/dashboard`, data);
 			}
+
+			router.refresh();
+			toast.success(toastMessage);
 		} catch (error) {
 			console.error('Failed to update settings:', error);
 		} finally {
@@ -79,17 +83,21 @@ const DashboardSettings = ({ initialData }: Props) => {
 	const onDelete = async () => {
 		setLoading(true);
 		try {
-			const response = await axios.delete(`/api/dashboard/${params.storeId}`);
+			const response = await axios.delete(
+				`/api/${params.storeId}/dashboard/${params.billboardId}`
+			);
 			if (response.status === 200) {
-				toast.success('Store deleted successfully');
+				toast.success('Dashboard deleted successfully');
 				router.refresh();
 				router.push('/');
 			} else {
-				toast.error('Error deleting store:', response.data);
+				toast.error('Error deleting dashboard:', response.data);
 			}
 		} catch (error) {
 			console.error('Failed to delete store:', error);
-			toast.error('An error occurred while deleting the store.');
+			toast.error(
+				'An error occurred while deleting the dashboard. Delete all Categories first!'
+			);
 		} finally {
 			setLoading(false);
 			setOpen(false);

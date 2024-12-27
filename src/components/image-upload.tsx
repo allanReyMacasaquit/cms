@@ -27,10 +27,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onUpload = (result: any) => {
-		console.log('Upload result:', result); // Log the entire result object
-
 		if (result.event === 'success') {
-			console.log('Uploaded URL:', result.info.secure_url); // Log the URL for verification
 			onChange(result.info.secure_url);
 		}
 	};
@@ -38,8 +35,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 	if (!isMounted) {
 		return null;
 	}
-
-	console.log('Image URLs:', value); // Log the value prop
 
 	return (
 		<div>
@@ -58,7 +53,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 								<Trash className='size-10' />
 							</Button>
 						</div>
-						<Image src={url} alt='Uploaded' fill />
+						<Image
+							src={url}
+							height={100}
+							width={100}
+							alt='Uploaded'
+							className='w-full rounded-md object-cover'
+						/>
 					</div>
 				))}
 			</div>
@@ -72,7 +73,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 					};
 					return (
 						<Button
-							className='mt-4'
+							className='md:mt-4'
 							type='button'
 							disabled={disabled}
 							onClick={onClick}

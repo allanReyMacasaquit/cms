@@ -16,6 +16,7 @@ export const dashboard = t.pgTable(
 			.notNull()
 			.references(() => store.id),
 		label: t.varchar('label', { length: 255 }).notNull(),
+		description: t.varchar('description', { length: 255 }).notNull(),
 		imageUrl: t.varchar('image_url', { length: 255 }).notNull(),
 		createdAt: t.timestamp('created_at').defaultNow(),
 		updatedAt: t.timestamp('updated_at').defaultNow(),

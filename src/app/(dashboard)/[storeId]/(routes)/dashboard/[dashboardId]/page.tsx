@@ -1,7 +1,7 @@
 import { db } from '@/app/db';
-import DashboardForm from '../components/dashboard-settings';
 import { eq } from 'drizzle-orm';
 import { dashboard } from '@/app/schema';
+import DashboardSettings from '../components/dashboard-settings';
 
 interface Props {
 	params: typeof dashboard.$inferSelect;
@@ -13,28 +13,28 @@ const DashBoardFormIdPage = async ({ params }: Props) => {
 		where: eq(dashboard.id, id), // Use the correct field name from the schema
 	});
 
-	// Handle the case where no data is found (e.g., display a message or redirect)
-	if (!data) {
-		return (
-			<div className='max-w-5xl mx-auto space-y-4 p-8'>
-				Dashboard not found.
-			</div>
-		); // Or handle it differently
-	}
-
-	const initialData = {
-		id: data.id,
-		storeId: data.storeId,
-		label: data.label,
-		imageUrl: data.imageUrl,
-		createdAt: data.createdAt || null,
-		updatedAt: data.updatedAt || null,
-	};
+	const initialData = data
+		? {
+				id: data.id,
+				storeId: data.storeId,
+				label: data.label,
+				imageUrl: data.imageUrl,
+				createdAt: data.createdAt || null,
+				updatedAt: data.updatedAt || null,
+			}
+		: {
+				id: '',
+				storeId: '',
+				label: '',
+				imageUrl: '',
+				createdAt: null,
+				updatedAt: null,
+			};
 
 	return (
 		<div>
 			<div className='space-y-4 p-8'>
-				<DashboardForm initialData={initialData} />
+				<DashboardSettings initialData={initialData} />
 			</div>
 		</div>
 	);

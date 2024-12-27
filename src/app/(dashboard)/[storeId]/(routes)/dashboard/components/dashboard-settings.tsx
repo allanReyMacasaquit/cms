@@ -22,12 +22,13 @@ import axios from 'axios'; // Import axios
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
 import AlertModal from '@/components/modals/alert-modal';
-import { ApiAlert } from '@/components/api-alert';
-import { useOrigin } from '@/hooks/use-origin';
+import ImageUpload from '@/components/image-upload';
+import { Textarea } from '@/components/ui/textarea';
 
 // Zod Schema
 const settingsSchema = z.object({
 	label: z.string().nonempty('Name is required'),
+	description: z.string().optional(),
 	imageUrl: z.string().nonempty('Image is Required'),
 });
 
@@ -38,26 +39,19 @@ interface Props {
 }
 
 // Settings Form Component
-const DashboardForm = ({ initialData }: Props) => {
+const DashboardSettings = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
 	const params = useParams();
 	const router = useRouter();
-	const origin = useOrigin();
 
-	const title = initialData ? 'Edit Dashboard Title' : 'Create Dashboard Title';
-	const description = initialData
-		? 'Edit Dashboard Description'
-		: 'Add Dashboard Description';
-	const toastMessage = initialData
-		? 'Dashboard Updated'
-		: 'Dashboard Succesfully Created';
-	const action = initialData ? 'Save Changes' : 'Created';
+	const title = !initialData ? 'Edit Dashboard' : 'Create Dashboard';
 
 	const form = useForm<DashboardFormValues>({
 		resolver: zodResolver(settingsSchema),
 		defaultValues: initialData || {
 			label: '',
+			description: '',
 			imageUrl: '',
 		},
 	});
@@ -112,9 +106,9 @@ const DashboardForm = ({ initialData }: Props) => {
 			/>
 
 			<div className='flex items-center justify-between max-w-5xl mx-auto'>
-				<Heading title={title} description='Manage Store Preferences' />
+				<Heading title={title} description='' />
 
-				{initialData && (
+				{!initialData && (
 					<Button
 						disabled={loading}
 						variant='destructive'
@@ -129,9 +123,34 @@ const DashboardForm = ({ initialData }: Props) => {
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className='space-y-4 mt-4 max-w-5xl mx-auto'
+					className='max-w-5xl mx-auto'
 				>
-					<div className='flex md:grid md:grid-cols-3 gap-8'>
+					<div className='flex-col items-center md:grid-cols-3 gap-8 space-y-8'>
+						<FormField
+							control={form.control}
+							name='imageUrl'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Upload Image</FormLabel>
+									<FormControl>
+										<ImageUpload
+											disabled={loading}
+											onChange={(url) => {
+												console.log('FormField onChange:', url); // Log the URL change
+												field.onChange(url);
+											}}
+											value={field.value ? [field.value] : []}
+											onRemove={() => {
+												console.log('FormField onRemove'); // Log the remove action
+												field.onChange('');
+											}}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<FormField
 							control={form.control}
 							name='label'
@@ -148,20 +167,37 @@ const DashboardForm = ({ initialData }: Props) => {
 								</FormItem>
 							)}
 						/>
-					</div>
 
-					<Button
-						type='submit'
-						disabled={loading}
-						className='bg-gradient-to-r from-blue-500 to-purple-600'
-					>
-						{loading ? 'Save Changes' : 'Created'}
-					</Button>
+						<FormField
+							control={form.control}
+							name='description'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Description</FormLabel>
+									<FormControl>
+										<Textarea
+											{...field}
+											className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+					<div className='flex items-center justify-end'>
+						<Button
+							type='submit'
+							disabled={loading}
+							className='bg-gradient-to-r from-blue-500 to-purple-600 mt-8'
+						>
+							{loading ? ' Created' : 'Save Changes'}
+						</Button>
+					</div>
 				</form>
 			</Form>
-			<Separator className='max-w-5xl mx-auto' />
 		</>
 	);
 };
 
-export default DashboardForm;
+export default DashboardSettings;

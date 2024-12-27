@@ -56,7 +56,7 @@ export function Switcher({ items = [] }: SwitcherProps) {
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
-				<Button aria-label='Select store'>
+				<Button aria-label='Select store' className='bg-slate-700'>
 					<StoreIcon className='mr-2' />
 					{currentStore ? currentStore.label : 'Select Store'}
 					<ChevronsUpDown className='ml-2' />

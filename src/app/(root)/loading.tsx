@@ -14,7 +14,7 @@ function Loading({ message = 'Loading...', className }: LoadingProps) {
 				className
 			)}
 		>
-			<Loader size={20} className='animate-spin' />
+			<Loader size={10} className='animate-spin' />
 			{message && <p className='text-sm text-muted-foreground'>{message}</p>}
 		</div>
 	);

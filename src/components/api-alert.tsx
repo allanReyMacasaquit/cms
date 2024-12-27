@@ -1,3 +1,5 @@
+'use client';
+
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'; // Named exports
 import { Copy, Server } from 'lucide-react';
 import { Badge, BadgeProps } from './ui/badge';
@@ -31,14 +33,16 @@ export const ApiAlert: React.FC<ApiAlertProps> = ({
 		toast.success('API Route copied to the clipboard');
 	};
 	return (
-		<Alert className='px-2'>
+		<Alert className='max-w-5xl mx-auto px-2'>
 			<Server className='h-4 w-4' />
 			<AlertTitle className='flex items-center gap-x-2 justify-between'>
 				{title}
 				<Badge variant={variantMap[variant]}>{textMap[variant]}</Badge>
 			</AlertTitle>
 			<AlertDescription className='mt-4 flex items-center justify-between'>
-				<code className='relative rounded-sm'>{description}</code>
+				<code className='relative rounded-sm shadow py-2 mb-2'>
+					{description}
+				</code>
 			</AlertDescription>
 			<div className='flex items-center justify-end'>
 				<Tooltip>

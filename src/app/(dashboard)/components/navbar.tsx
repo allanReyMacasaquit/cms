@@ -38,7 +38,7 @@ const Navbar = async () => {
 
 					<div className='flex items-center space-x-2 text-xl font-semibold px-2'>
 						<Image src='/logo.svg' alt='logo' height={50} width={50} priority />
-						<div className='md:hidden flex'>
+						<div className='md:hidden flex overflow-auto'>
 							<MainNav />
 						</div>
 					</div>

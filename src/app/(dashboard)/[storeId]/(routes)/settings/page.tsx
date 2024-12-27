@@ -4,7 +4,7 @@ import { store } from '@/app/schema';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
-
+import { validate as isValidUUID } from 'uuid';
 interface Props {
 	params: { storeId: string };
 }
@@ -12,10 +12,15 @@ interface Props {
 const SettingsPage = async ({ params }: Props) => {
 	const { userId } = await auth();
 	if (!userId) redirect('/auth');
+	const { storeId } = await params; // Await params to access storeId
+
+	if (!isValidUUID(storeId)) {
+		redirect('/');
+	}
 
 	// Fetch store data
 	const data = await db.query.store.findFirst({
-		where: eq(store.id, params.storeId),
+		where: eq(store.id, storeId),
 	});
 
 	const initialData = data
@@ -37,8 +42,8 @@ const SettingsPage = async ({ params }: Props) => {
 	if (!initialData) redirect('/');
 
 	return (
-		<div className='flex-col'>
-			<div className='flex-1 space-y-4 p-8 pt-6'>
+		<div>
+			<div className='flex-1 space-y-4 p-8'>
 				<Settings initialData={initialData} />
 			</div>
 		</div>

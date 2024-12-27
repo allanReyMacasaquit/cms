@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { store } from '@/app/schema';
+import { dashboard } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
@@ -27,34 +27,48 @@ import { useOrigin } from '@/hooks/use-origin';
 
 // Zod Schema
 const settingsSchema = z.object({
-	name: z.string().nonempty('Name is required'),
+	label: z.string().nonempty('Name is required'),
+	imageUrl: z.string().nonempty('Image is Required'),
 });
 
-type SettingsFormValues = z.infer<typeof settingsSchema>;
+type DashboardFormValues = z.infer<typeof settingsSchema>;
 
 interface Props {
-	initialData: typeof store.$inferSelect;
+	initialData: typeof dashboard.$inferSelect;
 }
 
 // Settings Form Component
-const SettingsForm = ({ initialData }: Props) => {
+const DashboardForm = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
 	const params = useParams();
 	const router = useRouter();
 	const origin = useOrigin();
 
-	const form = useForm<SettingsFormValues>({
+	const title = initialData ? 'Edit Dashboard Title' : 'Create Dashboard Title';
+	const description = initialData
+		? 'Edit Dashboard Description'
+		: 'Add Dashboard Description';
+	const toastMessage = initialData
+		? 'Dashboard Updated'
+		: 'Dashboard Succesfully Created';
+	const action = initialData ? 'Save Changes' : 'Created';
+
+	const form = useForm<DashboardFormValues>({
 		resolver: zodResolver(settingsSchema),
-		defaultValues: {
-			name: initialData.name || '',
+		defaultValues: initialData || {
+			label: '',
+			imageUrl: '',
 		},
 	});
 
-	const onSubmit = async (data: SettingsFormValues) => {
+	const onSubmit = async (data: DashboardFormValues) => {
 		setLoading(true);
 		try {
-			const response = await axios.patch(`/api/stores/${params.storeId}`, data);
+			const response = await axios.patch(
+				`/api/dashboard/${params.dashboardId}`,
+				data
+			);
 			router.refresh();
 			if (response.status === 200) {
 				toast.success('Store updated successfully');
@@ -71,7 +85,7 @@ const SettingsForm = ({ initialData }: Props) => {
 	const onDelete = async () => {
 		setLoading(true);
 		try {
-			const response = await axios.delete(`/api/stores/${params.storeId}`);
+			const response = await axios.delete(`/api/dashboard/${params.storeId}`);
 			if (response.status === 200) {
 				toast.success('Store deleted successfully');
 				router.refresh();
@@ -98,15 +112,18 @@ const SettingsForm = ({ initialData }: Props) => {
 			/>
 
 			<div className='flex items-center justify-between max-w-5xl mx-auto'>
-				<Heading title='Settings' description='Manage Store Preferences' />
-				<Button
-					disabled={loading}
-					variant='destructive'
-					size='sm'
-					onClick={() => setOpen(true)}
-				>
-					<Trash className='size-3' />
-				</Button>
+				<Heading title={title} description='Manage Store Preferences' />
+
+				{initialData && (
+					<Button
+						disabled={loading}
+						variant='destructive'
+						size='sm'
+						onClick={() => setOpen(true)}
+					>
+						<Trash className='size-3' />
+					</Button>
+				)}
 			</div>
 			<Separator className='max-w-5xl mx-auto' />
 			<Form {...form}>
@@ -117,10 +134,10 @@ const SettingsForm = ({ initialData }: Props) => {
 					<div className='flex md:grid md:grid-cols-3 gap-8'>
 						<FormField
 							control={form.control}
-							name='name'
+							name='label'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>Label</FormLabel>
 									<FormControl>
 										<Input
 											{...field}
@@ -138,18 +155,13 @@ const SettingsForm = ({ initialData }: Props) => {
 						disabled={loading}
 						className='bg-gradient-to-r from-blue-500 to-purple-600'
 					>
-						{loading ? 'Saving...' : 'Save Changes'}
+						{loading ? 'Save Changes' : 'Created'}
 					</Button>
 				</form>
 			</Form>
 			<Separator className='max-w-5xl mx-auto' />
-			<ApiAlert
-				title='NEXT_PUBLIC_API_URL'
-				description={`${origin}/api/${params.storeId}`}
-				variant='public'
-			/>
 		</>
 	);
 };
 
-export default SettingsForm;
+export default DashboardForm;

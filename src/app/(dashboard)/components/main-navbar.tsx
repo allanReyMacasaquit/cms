@@ -18,6 +18,16 @@ export function MainNav({
 			active: pathname === `/${params.storeId}`,
 		},
 		{
+			href: `/${params.storeId}/dashboard`,
+			label: 'Dashboard',
+			active: pathname === `/${params.storeId}/dashboard`,
+		},
+		{
+			href: `/${params.storeId}/category`,
+			label: 'Category',
+			active: pathname === `/${params.storeId}/category`,
+		},
+		{
 			href: `/${params.storeId}/settings`,
 			label: 'Settings',
 			active: pathname === `/${params.storeId}/settings`,
@@ -27,7 +37,7 @@ export function MainNav({
 	return (
 		<nav
 			className={cn(
-				'flex items-center rounded-md bg-white p-2 md:p-0 md:px-2 space-x-4 lg:space-x-6',
+				'md:flex items-center md:rounded-md md:bg-white md:p-0 md:px-2 md:space-x-4 lg:space-x-6',
 				className
 			)}
 			{...props}
@@ -38,7 +48,9 @@ export function MainNav({
 					href={route.href}
 					className={cn(
 						'transition-colors flex items-center text-black',
-						route.active ? ' dark:text-white' : 'text-zinc-400 '
+						route.active
+							? 'md:border border-spacing-4 border-slate-600 rounded-md md:px-2 transition md:bg-gradient-to-r from-blue-500 to-purple-600 dark:text-white text-white'
+							: 'text-zinc-500 hover:text-black '
 					)}
 				>
 					{route.label}

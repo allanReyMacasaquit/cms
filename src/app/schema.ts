@@ -1,25 +1,35 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-
-export const store = pgTable('store', {
-	id: uuid('id').primaryKey(),
-	name: text('name').notNull(),
-	userId: text('user_id').notNull(),
-	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').defaultNow(),
+import * as t from 'drizzle-orm/pg-core';
+export const store = t.pgTable('store', {
+	id: t.uuid('id').primaryKey(),
+	name: t.text('name').notNull(),
+	userId: t.text('user_id').notNull(),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
-// export const postsTable = pgTable('posts_table', {
-// 	id: serial('id').primaryKey(),
-// 	title: text('title').notNull(),
-// 	content: text('content').notNull(),
-// 	userId: integer('user_id')
-// 		.notNull()
-// 		.references(() => usersTable.id, { onDelete: 'cascade' }),
-// 	createdAt: timestamp('created_at').notNull().defaultNow(),
-// 	updatedAt: timestamp('updated_at')
-// 		.notNull()
-// 		.$onUpdate(() => new Date()),
-// });
+export const dashboard = t.pgTable(
+	'dashboard',
+	{
+		id: t.uuid('id').defaultRandom().primaryKey(),
+		storeId: t
+			.uuid('store_id')
+			.notNull()
+			.references(() => store.id),
+		label: t.varchar('label', { length: 255 }).notNull(),
+		imageUrl: t.varchar('image_url', { length: 255 }).notNull(),
+		createdAt: t.timestamp('created_at').defaultNow(),
+		updatedAt: t.timestamp('updated_at').defaultNow(),
+	},
+	(table) => {
+		return {
+			storeIdIndex: t.uniqueIndex('store_id_idx').on(table.storeId),
+		};
+	}
+);
 
-export type InsertUser = typeof store.$inferInsert;
-export type SelectUser = typeof store.$inferSelect;
+// Types for Insert and Select
+export type InsertStore = typeof store.$inferInsert;
+export type SelectStore = typeof store.$inferSelect;
+
+export type InsertDashboard = typeof dashboard.$inferInsert;
+export type SelectDashboard = typeof dashboard.$inferSelect;

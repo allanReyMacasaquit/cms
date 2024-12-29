@@ -10,32 +10,25 @@ export async function POST(
 	{ params }: { params: { storeId: string } }
 ) {
 	try {
-		// Validate storeId from params
-		const { storeId } = await params;
+		const { storeId } = params;
 		if (!storeId) {
-			return new NextResponse('Store ID is Required', { status: 400 });
+			return new NextResponse('Store ID is required', { status: 400 });
 		}
 
-		// Authenticate user
 		const { userId } = await auth();
 		if (!userId) {
 			return new NextResponse('Unauthenticated', { status: 401 });
 		}
 
-		// Parse and validate request body
 		const body = await req.json();
 		const { label, description, imageUrl } = body;
 
-		if (!label) {
-			return new NextResponse('Label is Required', { status: 400 });
-		}
-
-		if (!imageUrl) {
-			return new NextResponse('Image is Required', { status: 400 });
-		}
+		if (!label) return new NextResponse('Label is required', { status: 400 });
+		if (!imageUrl)
+			return new NextResponse('Image URL is required', { status: 400 });
 
 		const storeByUserId = await db.query.store.findFirst({
-			where: eq(store.id, params.storeId),
+			where: eq(store.id, storeId),
 		});
 
 		if (!storeByUserId) {
@@ -53,32 +46,44 @@ export async function POST(
 			})
 			.returning();
 
-		// Return the inserted data
 		return NextResponse.json(data);
 	} catch (error) {
 		console.error('[DASHBOARD_POST]', error);
-		return new NextResponse('Internal Error', { status: 500 });
+		return new NextResponse('Internal Server Error', { status: 500 });
 	}
 }
 
 export async function GET(
 	req: Request,
-	{ params }: { params: { storeId: string } }
+	{ params }: { params: { storeId: string; dashboardId?: string } }
 ) {
 	try {
-		// Validate storeId from params
-		const { storeId } = await params;
+		const { storeId, dashboardId } = params;
 		if (!storeId) {
-			return new NextResponse('Store ID is Required', { status: 400 });
+			return new NextResponse('Store ID is required', { status: 400 });
 		}
 
+		if (dashboardId) {
+			// Retrieve a specific dashboard by ID
+			const dashboardData = await db.query.dashboard.findFirst({
+				where: eq(dashboard.id, dashboardId),
+			});
+
+			if (!dashboardData) {
+				return new NextResponse('Dashboard not found', { status: 404 });
+			}
+
+			return NextResponse.json(dashboardData);
+		}
+
+		// Retrieve all dashboards for the store
 		const dashboards = await db.query.dashboard.findMany({
-			where: eq(store.id, params.storeId),
+			where: eq(dashboard.storeId, storeId),
 		});
 
 		return NextResponse.json(dashboards);
 	} catch (error) {
 		console.error('[DASHBOARD_GET]', error);
-		return new NextResponse('Internal Error', { status: 500 });
+		return new NextResponse('Internal Server Error', { status: 500 });
 	}
 }

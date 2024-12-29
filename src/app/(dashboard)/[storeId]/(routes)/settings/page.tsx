@@ -1,4 +1,4 @@
-import Settings from '@/app/(dashboard)/components/settings';
+import StoreSettings from '@/app/(dashboard)/components/store-settings';
 import { db } from '@/app/db';
 import { store } from '@/app/schema';
 import { auth } from '@clerk/nextjs/server';
@@ -44,7 +44,7 @@ const SettingsPage = async ({ params }: Props) => {
 	return (
 		<div>
 			<div className='flex-1 space-y-4 p-8'>
-				<Settings initialData={initialData} />
+				<StoreSettings initialData={initialData} />
 			</div>
 		</div>
 	);

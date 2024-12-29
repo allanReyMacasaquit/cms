@@ -39,7 +39,9 @@ export async function PATCH(
 			);
 		}
 
-		if (!params.storeId) {
+		const { storeId } = await params;
+
+		if (!storeId) {
 			return NextResponse.json(
 				{ success: false, message: 'Store ID is required' },
 				{ status: 400 }
@@ -50,7 +52,7 @@ export async function PATCH(
 		const updatedStore = await db
 			.update(store)
 			.set({ name })
-			.where(and(eq(store.id, params.storeId), eq(store.userId, userId)))
+			.where(and(eq(store.id, storeId), eq(store.userId, userId)))
 			.returning();
 
 		// Handle case where store is not found
@@ -93,9 +95,9 @@ export async function DELETE(
 				{ status: 401 }
 			);
 		}
-
+		const { storeId } = await params;
 		// Validate store ID
-		if (!params.storeId) {
+		if (!storeId) {
 			return NextResponse.json(
 				{ success: false, message: 'Store ID is required' },
 				{ status: 400 }
@@ -105,7 +107,7 @@ export async function DELETE(
 		// Delete the store from the database
 		const deletedStore = await db
 			.delete(store)
-			.where(and(eq(store.id, params.storeId), eq(store.userId, userId)))
+			.where(and(eq(store.id, storeId), eq(store.userId, userId)))
 			.returning();
 
 		// Handle case where store is not found

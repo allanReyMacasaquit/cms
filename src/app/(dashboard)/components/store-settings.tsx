@@ -37,7 +37,7 @@ interface Props {
 }
 
 // Settings Form Component
-const SettingsForm = ({ initialData }: Props) => {
+const StoreSettings = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
 	const params = useParams();
@@ -152,4 +152,4 @@ const SettingsForm = ({ initialData }: Props) => {
 	);
 };
 
-export default SettingsForm;
+export default StoreSettings;

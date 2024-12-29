@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Form,
 	FormControl,
@@ -18,7 +18,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
 import AlertModal from '@/components/modals/alert-modal';
@@ -42,49 +42,79 @@ interface Props {
 const DashboardSettings = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [dashboardData, setDashboardData] = useState(initialData);
 	const params = useParams();
 	const router = useRouter();
 
-	const title = initialData ? 'Edit Dashboard' : 'Create Dashboard';
-	const toastMessage = initialData
-		? 'Edited image successfully'
-		: 'Created image successfully';
+	const title = dashboardData.storeId ? 'Edit Dashboard' : 'Create Dashboard';
 
 	const form = useForm<DashboardFormValues>({
 		resolver: zodResolver(settingsSchema),
-		defaultValues: initialData || {
+		defaultValues: dashboardData || {
 			label: '',
 			description: '',
 			imageUrl: '',
 		},
 	});
 
+	useEffect(() => {
+		const fetchDashboard = async () => {
+			if (params.dashboardId) {
+				setLoading(true);
+				try {
+					const response = await axios.get(
+						`/api/${params.storeId}/dashboard/${params.dashboardId}`
+					);
+					setDashboardData(response.data);
+					form.reset(response.data);
+					router.refresh();
+				} catch (error) {
+					if (error) toast.error('Failed to fetch dashboard data.');
+					router.push(`/${params.storeId}/dashboard`);
+				} finally {
+					setLoading(false);
+				}
+			} else {
+				console.warn('No dashboard ID provided.');
+				toast.error('No dashboard ID provided.');
+			}
+		};
+		fetchDashboard();
+	}, [params.dashboardId, params.storeId, form, router]);
+
 	const onSubmit = async (data: DashboardFormValues) => {
 		setLoading(true);
 		try {
-			if (initialData) {
+			if (dashboardData.storeId) {
+				// Update Dashboard
 				await axios.patch(
-					`/api/${params.storeId}/dashboard/${params.billboardId}`,
+					`/api/${params.storeId}/dashboard/${params.dashboardId}`,
 					data
 				);
+				toast.success('Dashboard updated successfully.');
+				router.push(`/${params.storeId}/dashboard`);
+				router.refresh();
 			} else {
+				// Create New Dashboard
 				await axios.post(`/api/${params.storeId}/dashboard`, data);
+				toast.success('New dashboard created successfully.');
+				router.push(`/${params.storeId}/dashboard`);
+				router.refresh();
 			}
-
-			router.refresh();
-			toast.success(toastMessage);
 		} catch (error) {
-			console.error('Failed to update settings:', error);
+			console.error('Failed to save dashboard:', error);
+			toast.error('An error occurred while saving the dashboard.');
 		} finally {
 			setLoading(false);
 		}
 	};
-	// Delete store
+
+	// Delete Dashboard
 	const onDelete = async () => {
 		setLoading(true);
 		try {
 			const response = await axios.delete(
-				`/api/${params.storeId}/dashboard/${params.billboardId}`
+				`/api/${params.storeId}/dashboard/${params.dashboardId}`
 			);
 			if (response.status === 200) {
 				toast.success('Dashboard deleted successfully');
@@ -94,7 +124,7 @@ const DashboardSettings = ({ initialData }: Props) => {
 				toast.error('Error deleting dashboard:', response.data);
 			}
 		} catch (error) {
-			console.error('Failed to delete store:', error);
+			console.error('Failed to delete dashboard:', error);
 			toast.error(
 				'An error occurred while deleting the dashboard. Delete all Categories first!'
 			);
@@ -116,7 +146,7 @@ const DashboardSettings = ({ initialData }: Props) => {
 			<div className='flex items-center justify-between max-w-5xl mx-auto'>
 				<Heading title={title} description='' />
 
-				{!initialData && (
+				{dashboardData.storeId && (
 					<Button
 						disabled={loading}
 						variant='destructive'
@@ -143,15 +173,9 @@ const DashboardSettings = ({ initialData }: Props) => {
 									<FormControl>
 										<ImageUpload
 											disabled={loading}
-											onChange={(url) => {
-												console.log('FormField onChange:', url); // Log the URL change
-												field.onChange(url);
-											}}
+											onChange={(url) => field.onChange(url)}
 											value={field.value ? [field.value] : []}
-											onRemove={() => {
-												console.log('FormField onRemove'); // Log the remove action
-												field.onChange('');
-											}}
+											onRemove={() => field.onChange('')}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -166,10 +190,7 @@ const DashboardSettings = ({ initialData }: Props) => {
 								<FormItem>
 									<FormLabel>Label</FormLabel>
 									<FormControl>
-										<Input
-											{...field}
-											className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-										/>
+										<Input {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -183,10 +204,7 @@ const DashboardSettings = ({ initialData }: Props) => {
 								<FormItem>
 									<FormLabel>Description</FormLabel>
 									<FormControl>
-										<Textarea
-											{...field}
-											className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-										/>
+										<Textarea {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -199,7 +217,7 @@ const DashboardSettings = ({ initialData }: Props) => {
 							disabled={loading}
 							className='bg-gradient-to-r from-blue-500 to-purple-600 mt-8'
 						>
-							{loading ? ' Created' : 'Save Changes'}
+							{loading ? 'Saving...' : 'Save Changes'}
 						</Button>
 					</div>
 				</form>

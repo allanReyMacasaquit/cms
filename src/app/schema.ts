@@ -7,26 +7,18 @@ export const store = t.pgTable('store', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
-export const dashboard = t.pgTable(
-	'dashboard',
-	{
-		id: t.uuid('id').defaultRandom().primaryKey(),
-		storeId: t
-			.uuid('store_id')
-			.notNull()
-			.references(() => store.id),
-		label: t.varchar('label', { length: 255 }).notNull(),
-		description: t.varchar('description', { length: 255 }).notNull(),
-		imageUrl: t.varchar('image_url', { length: 255 }).notNull(),
-		createdAt: t.timestamp('created_at').defaultNow(),
-		updatedAt: t.timestamp('updated_at').defaultNow(),
-	},
-	(table) => {
-		return {
-			storeIdIndex: t.uniqueIndex('store_id_idx').on(table.storeId),
-		};
-	}
-);
+export const dashboard = t.pgTable('dashboard', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	storeId: t
+		.uuid('store_id')
+		.notNull()
+		.references(() => store.id),
+	label: t.varchar('label', { length: 255 }).notNull(),
+	description: t.varchar('description', { length: 255 }).notNull(),
+	imageUrl: t.varchar('image_url', { length: 255 }).notNull(),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
 
 // Types for Insert and Select
 export type InsertStore = typeof store.$inferInsert;

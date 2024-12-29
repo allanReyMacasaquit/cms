@@ -1,7 +1,7 @@
 import { db } from '@/app/db';
 import { eq } from 'drizzle-orm';
 import { dashboard } from '@/app/schema';
-import DashboardSettings from '../components/dashboard-settings';
+import DashboardSettings from '@/app/(dashboard)/components/dashboard-settings';
 
 interface Props {
 	params: typeof dashboard.$inferSelect;
@@ -18,6 +18,7 @@ const DashBoardFormIdPage = async ({ params }: Props) => {
 				id: data.id,
 				storeId: data.storeId,
 				label: data.label,
+				description: data.description,
 				imageUrl: data.imageUrl,
 				createdAt: data.createdAt || null,
 				updatedAt: data.updatedAt || null,
@@ -26,6 +27,7 @@ const DashBoardFormIdPage = async ({ params }: Props) => {
 				id: '',
 				storeId: '',
 				label: '',
+				description: '',
 				imageUrl: '',
 				createdAt: null,
 				updatedAt: null,

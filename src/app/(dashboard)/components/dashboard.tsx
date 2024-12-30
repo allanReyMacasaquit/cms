@@ -8,6 +8,7 @@ import { columns, DashboardColumn } from './columns';
 
 import { Separator } from '@/components/ui/separator';
 import DataTable from './data-table';
+import { ApiList } from '@/components/api-list';
 
 interface Props {
 	data: DashboardColumn[];
@@ -35,6 +36,11 @@ const Dashboard = ({ data }: Props) => {
 			</div>
 			<Separator className='max-w-5xl mx-auto' />
 			<DataTable columns={columns} data={data} searchKey='label' />
+			<div className='max-w-5xl mx-auto'>
+				<Heading title='API' description='API calls for dashboards' />
+				<Separator />
+				<ApiList entityName='dashboard' entityIdName='dashboardId' />
+			</div>
 		</>
 	);
 };

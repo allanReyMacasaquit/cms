@@ -75,13 +75,12 @@ const StoreSettings = ({ initialData }: Props) => {
 			if (response.status === 200) {
 				toast.success('Store deleted successfully');
 				router.refresh();
-				router.push('/');
+				router.push(`/${params.storeId}/dashboard`);
 			} else {
 				toast.error('Error deleting store:', response.data);
 			}
 		} catch (error) {
-			console.error('Failed to delete store:', error);
-			toast.error('An error occurred while deleting the store.');
+			if (error) toast.error('Remove all dashboards before deleting store!');
 		} finally {
 			setLoading(false);
 			setOpen(false);

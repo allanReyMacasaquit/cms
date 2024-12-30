@@ -56,7 +56,7 @@ const Navbar = async () => {
 					<div className='md:hidden'>
 						<Sheet>
 							<SheetTrigger asChild>
-								<div className='px-2'>
+								<div className='mr-6'>
 									<Button variant='secondary'>☰</Button>
 								</div>
 							</SheetTrigger>

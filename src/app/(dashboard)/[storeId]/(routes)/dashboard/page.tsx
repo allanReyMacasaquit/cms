@@ -2,7 +2,7 @@ import Dashboard from '@/app/(dashboard)/components/dashboard';
 import { db } from '@/app/db';
 import { dashboard } from '@/app/schema';
 import { eq } from 'drizzle-orm';
-import { DashboardColumn } from './[dashboardId]/columns';
+import { DashboardColumn } from '../../../components/columns';
 import { format } from 'date-fns';
 
 const DashboardPage = async ({ params }: { params: { storeId: string } }) => {

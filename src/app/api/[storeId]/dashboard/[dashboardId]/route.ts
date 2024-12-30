@@ -119,11 +119,12 @@ export async function DELETE(
 		// Delete the store from the database
 		const deletedDashboard = await db
 			.delete(dashboard)
-			.where(and(eq(dashboard.id, dashboardId), eq(store.userId, userId)))
-			.returning();
+			.where(
+				and(eq(dashboard.storeId, storeId), eq(dashboard.id, dashboardId))
+			);
 
 		// Handle case where Dashboard is not found
-		if (deletedDashboard.length === 0) {
+		if (!deletedDashboard) {
 			return NextResponse.json(
 				{ success: false, message: 'Dashboard not found' },
 				{ status: 404 }

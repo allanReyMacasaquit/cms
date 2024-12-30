@@ -20,9 +20,27 @@ export const dashboard = t.pgTable('dashboard', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
+export const category = t.pgTable('category', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	storeId: t
+		.uuid('store_id')
+		.notNull()
+		.references(() => store.id),
+	billboardId: t
+		.uuid('billboard_id')
+		.notNull()
+		.references(() => dashboard.id),
+	name: t.varchar('name', { length: 255 }).notNull(),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
+
 // Types for Insert and Select
 export type InsertStore = typeof store.$inferInsert;
 export type SelectStore = typeof store.$inferSelect;
 
 export type InsertDashboard = typeof dashboard.$inferInsert;
 export type SelectDashboard = typeof dashboard.$inferSelect;
+
+export type InsertCategory = typeof category.$inferInsert;
+export type SelectCategory = typeof category.$inferSelect;

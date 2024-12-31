@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { DashboardColumn } from './columns';
+import { DashboardColumn } from '../[storeId]/(routes)/dashboard/columns';
 import { Separator } from '@/components/ui/separator';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';

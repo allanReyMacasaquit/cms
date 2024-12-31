@@ -7,7 +7,7 @@ import { dashboard } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
+import { Save, Trash } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
 	Form,
@@ -163,6 +163,23 @@ const DashboardSettings = ({ initialData }: Props) => {
 					onSubmit={form.handleSubmit(onSubmit)}
 					className='max-w-5xl mx-auto'
 				>
+					<div className='flex items-center justify-end mb-12'>
+						<Button
+							type='submit'
+							disabled={loading}
+							className='bg-gradient-to-r from-blue-500 to-purple-600 mt-8'
+						>
+							{loading ? (
+								'Saving...'
+							) : (
+								<p className='flex items-center'>
+									<Save />
+									<span className='ml-2'>Save Changes</span>
+								</p>
+							)}
+						</Button>
+					</div>
+					<Separator className='mb-10' />
 					<div className='flex-col items-center md:grid-cols-3 gap-8 space-y-8'>
 						<FormField
 							control={form.control}
@@ -210,15 +227,6 @@ const DashboardSettings = ({ initialData }: Props) => {
 								</FormItem>
 							)}
 						/>
-					</div>
-					<div className='flex items-center justify-end'>
-						<Button
-							type='submit'
-							disabled={loading}
-							className='bg-gradient-to-r from-blue-500 to-purple-600 mt-8'
-						>
-							{loading ? 'Saving...' : 'Save Changes'}
-						</Button>
 					</div>
 				</form>
 			</Form>

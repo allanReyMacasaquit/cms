@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import * as t from 'drizzle-orm/pg-core';
 export const store = t.pgTable('store', {
 	id: t.uuid('id').primaryKey(),
@@ -26,14 +27,21 @@ export const category = t.pgTable('category', {
 		.uuid('store_id')
 		.notNull()
 		.references(() => store.id),
-	billboardId: t
-		.uuid('billboard_id')
+	dashboardId: t
+		.uuid('dashboard_id')
 		.notNull()
 		.references(() => dashboard.id),
 	name: t.varchar('name', { length: 255 }).notNull(),
 	createdAt: t.timestamp('created_at').defaultNow(),
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
+
+export const categoryRelations = relations(category, ({ one }) => ({
+	dashboard: one(dashboard, {
+		fields: [category.dashboardId],
+		references: [dashboard.id],
+	}),
+}));
 
 // Types for Insert and Select
 export type InsertStore = typeof store.$inferInsert;

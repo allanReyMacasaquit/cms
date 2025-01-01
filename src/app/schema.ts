@@ -36,6 +36,18 @@ export const category = t.pgTable('category', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
+export const size = t.pgTable('size', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	name: t.varchar('name', { length: 255 }).notNull(),
+	value: t.varchar('value', { length: 255 }).notNull(),
+	storeId: t
+		.uuid('store_id')
+		.notNull()
+		.references(() => store.id),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
+
 export const categoryRelations = relations(category, ({ one }) => ({
 	dashboard: one(dashboard, {
 		fields: [category.dashboardId],

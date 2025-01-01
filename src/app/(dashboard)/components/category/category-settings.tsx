@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Save, Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Form,
 	FormControl,
@@ -48,24 +48,49 @@ interface Props {
 const CategorySettings = ({ initialData, dashboard }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
-
+	const [categoryData, setCategoryData] = useState(initialData);
 	const params = useParams();
 	const router = useRouter();
 
-	const title = initialData.storeId ? 'Edit Category' : 'Create Category';
+	const title = categoryData.storeId ? 'Edit Category' : 'Create Category';
 
 	const form = useForm<CategoryFormValues>({
 		resolver: zodResolver(settingsSchema),
-		defaultValues: initialData || {
+		defaultValues: categoryData || {
 			name: '',
 			dashboardId: '',
 		},
 	});
 
+	useEffect(() => {
+		const fetchDashboard = async () => {
+			if (params.categoryId) {
+				setLoading(true);
+				try {
+					const response = await axios.get(
+						`/api/${params.storeId}/category/${params.categoryId}`
+					);
+					setCategoryData(response.data);
+					form.reset(response.data);
+					router.refresh();
+				} catch (error) {
+					if (error) toast.error('Failed to fetch dashboard data.');
+					router.push(`/${params.storeId}/category`);
+				} finally {
+					setLoading(false);
+				}
+			} else {
+				console.warn('No category ID provided.');
+				toast.error('No category ID provided.');
+			}
+		};
+		fetchDashboard();
+	}, [params.categoryId, params.storeId, form, router]);
+
 	const onSubmit = async (data: CategoryFormValues) => {
 		setLoading(true);
 		try {
-			if (initialData.storeId) {
+			if (categoryData.storeId) {
 				// Update Dashboard
 				await axios.patch(
 					`/api/${params.storeId}/category/${params.categoryId}`,
@@ -99,15 +124,15 @@ const CategorySettings = ({ initialData, dashboard }: Props) => {
 			if (response.status === 200) {
 				toast.success('Category deleted successfully');
 				router.refresh();
-				router.push('/');
+				router.push(`/${params.storeId}/category`);
 			} else {
 				toast.error('Error deleting category:', response.data);
 			}
 		} catch (error) {
-			console.error('Failed to delete category:', error);
-			toast.error(
-				'An error occurred while deleting the category. Make sure no products associated to this category.'
-			);
+			if (error)
+				toast.error(
+					'An error occurred while deleting the category. Make sure no products associated to this category.'
+				);
 		} finally {
 			setLoading(false);
 			setOpen(false);
@@ -126,7 +151,7 @@ const CategorySettings = ({ initialData, dashboard }: Props) => {
 			<div className='flex items-center justify-between max-w-5xl mx-auto'>
 				<Heading title={title} description='' />
 
-				{initialData.storeId && (
+				{categoryData.storeId && (
 					<Button
 						disabled={loading}
 						variant='destructive'

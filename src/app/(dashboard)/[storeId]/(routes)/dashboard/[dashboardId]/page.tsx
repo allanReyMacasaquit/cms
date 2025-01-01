@@ -1,7 +1,7 @@
 import { db } from '@/app/db';
 import { eq } from 'drizzle-orm';
 import { dashboard } from '@/app/schema';
-import DashboardSettings from '@/app/(dashboard)/components/dashboard-settings';
+import DashboardSettings from '@/app/(dashboard)/components/dashboard/dashboard-settings';
 
 interface Props {
 	params: typeof dashboard.$inferSelect;

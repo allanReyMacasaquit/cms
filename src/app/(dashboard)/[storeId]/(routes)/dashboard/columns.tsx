@@ -1,7 +1,7 @@
 'use client';
 
+import DashboardCellAction from '@/app/(dashboard)/components/dashboard/dashboard-cell-action';
 import { ColumnDef } from '@tanstack/react-table';
-import CellAction from '../../../components/cell-action';
 
 export type DashboardColumn = {
 	id: string;
@@ -21,6 +21,6 @@ export const columns: ColumnDef<DashboardColumn>[] = [
 	{
 		id: 'actions',
 		header: '',
-		cell: ({ row }) => <CellAction data={row.original} />,
+		cell: ({ row }) => <DashboardCellAction data={row.original} />,
 	},
 ];

@@ -1,6 +1,6 @@
 'use client';
 
-import CellAction from '@/app/(dashboard)/components/cell-action';
+import CategoryCellAction from '@/app/(dashboard)/components/category/category-cell-actions';
 import { ColumnDef } from '@tanstack/react-table';
 
 export type CategoryColumn = {
@@ -17,7 +17,7 @@ export const columns: ColumnDef<CategoryColumn>[] = [
 	},
 	{
 		accessorKey: 'label',
-		header: 'Label',
+		header: 'Dashbard',
 		cell: ({ row }) => row.original.label,
 	},
 	{
@@ -27,6 +27,6 @@ export const columns: ColumnDef<CategoryColumn>[] = [
 	{
 		id: 'actions',
 		header: '',
-		cell: ({ row }) => <CellAction data={row.original} />,
+		cell: ({ row }) => <CategoryCellAction data={row.original} />,
 	},
 ];

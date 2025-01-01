@@ -58,6 +58,7 @@ const StoreSettings = ({ initialData }: Props) => {
 			router.refresh();
 			if (response.status === 200) {
 				toast.success('Store updated successfully');
+				router.push(`/`);
 			} else {
 				toast.error('Error updating store:', response.data);
 			}

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { DashboardColumn } from '../[storeId]/(routes)/dashboard/columns';
+import { DashboardColumn } from '../../[storeId]/(routes)/dashboard/columns';
 import { Separator } from '@/components/ui/separator';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
@@ -21,7 +21,7 @@ interface Props {
 	data: DashboardColumn;
 }
 
-const CellAction = ({ data }: Props) => {
+const CategoryCellAction = ({ data }: Props) => {
 	const router = useRouter();
 	const params = useParams();
 
@@ -30,27 +30,27 @@ const CellAction = ({ data }: Props) => {
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText(data.id);
-		toast.success('Dashboard Id copied to the clipboard');
+		toast.success('Category Id copied to the clipboard');
 	};
 	const handleEdit = () => {
-		router.push(`/${params.storeId}/dashboard/${data.id}`);
+		router.push(`/${params.storeId}/category/${data.id}`);
 	};
 
 	const handleDelete = async () => {
 		setLoading(true);
 		try {
 			const response = await axios.delete(
-				`/api/${params.storeId}/dashboard/${data.id}`
+				`/api/${params.storeId}/category/${data.id}`
 			);
 			if (response.status === 200) {
-				toast.success('Dashboard deleted successfully');
+				toast.success('Category deleted successfully');
 				router.refresh();
-				router.push(`/${params.storeId}/dashboard`);
+				router.push(`/${params.storeId}/category`);
 			} else {
-				toast.error('Error deleting dashboard:', response.data);
+				toast.error('Error deleting category:', response.data);
 			}
 		} catch (error) {
-			console.error('Failed to delete dashboard:', error);
+			console.error('Failed to delete category:', error);
 			toast.error(
 				'An error occurred while deleting the dashboard. Delete all Categories first!'
 			);
@@ -104,4 +104,4 @@ const CellAction = ({ data }: Props) => {
 	);
 };
 
-export default CellAction;
+export default CategoryCellAction;

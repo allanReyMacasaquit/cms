@@ -1,4 +1,4 @@
-import Dashboard from '@/app/(dashboard)/components/dashboard';
+import Dashboard from '@/app/(dashboard)/components/dashboard/dashboard';
 import { db } from '@/app/db';
 import { dashboard } from '@/app/schema';
 import { eq } from 'drizzle-orm';

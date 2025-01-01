@@ -55,10 +55,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 						</div>
 						<Image
 							src={url}
-							height={100}
-							width={100}
+							height={600}
+							width={600}
 							alt='Uploaded'
-							className='w-full rounded-md object-cover'
+							className='w-full rounded-md'
 						/>
 					</div>
 				))}

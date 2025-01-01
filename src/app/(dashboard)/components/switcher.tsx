@@ -10,9 +10,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
-import { Check, ChevronsUpDown, PlusCircle, StoreIcon } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
+import { StoreIcon, PlusCircle, Check, ChevronsUpDown } from 'lucide-react';
 import {
 	Command,
 	CommandEmpty,
@@ -22,13 +20,11 @@ import {
 	CommandList,
 	CommandSeparator,
 } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
 
-type PopoverTriggerProps = React.ComponentPropsWithoutRef<
-	typeof PopoverTrigger
->;
-interface SwitcherProps extends PopoverTriggerProps {
+type SwitcherProps = {
 	items: (typeof store.$inferSelect)[]; // Ensure this is the correct type
-}
+};
 
 export function Switcher({ items = [] }: SwitcherProps) {
 	const [open, setOpen] = React.useState(false);
@@ -36,7 +32,6 @@ export function Switcher({ items = [] }: SwitcherProps) {
 	const params = useParams();
 	const router = useRouter();
 
-	// Ensure items is an array before attempting to map over it
 	const formattedItems = Array.isArray(items)
 		? items.map((item) => ({
 				label: item.name,
@@ -56,24 +51,35 @@ export function Switcher({ items = [] }: SwitcherProps) {
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
-				<Button aria-label='Select store' className='bg-slate-700'>
-					<StoreIcon className='mr-2' />
-					{currentStore ? currentStore.label : 'Select Store'}
-					<ChevronsUpDown className='ml-2' />
+				<Button
+					variant='outline'
+					role='combobox'
+					aria-expanded={open}
+					aria-label='Select store'
+					className='w-[200px] justify-between text-muted-foreground'
+				>
+					{currentStore ? (
+						<>
+							<StoreIcon className='mr-2 h-4 w-4' />
+							{currentStore.label}
+						</>
+					) : (
+						'Select Store'
+					)}
+					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
 
-			<PopoverContent className='md:w-[200px] p-0'>
+			<PopoverContent className='w-[200px] p-0'>
 				<Command>
+					<CommandInput placeholder='Search store...' />
+					<CommandEmpty>No store found.</CommandEmpty>
 					<CommandList>
-						<CommandInput placeholder='Search store...' />
-						<CommandEmpty>No store found.</CommandEmpty>
 						<CommandGroup heading='Stores'>
 							{formattedItems.map((store) => (
 								<CommandItem
 									key={store.value}
 									onSelect={() => onStoreSelect(store)}
-									className='text-sm'
 								>
 									<StoreIcon className='mr-2 h-4 w-4' />
 									{store.label}

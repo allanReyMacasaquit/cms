@@ -2,7 +2,7 @@ import { db } from '@/app/db';
 import { eq } from 'drizzle-orm';
 
 import { category, dashboard } from '@/app/schema';
-import CategorySettings from '@/app/(dashboard)/components/category-settings';
+import CategorySettings from '@/app/(dashboard)/components/category/category-settings';
 
 interface Props {
 	params: {

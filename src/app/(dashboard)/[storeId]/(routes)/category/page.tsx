@@ -4,20 +4,17 @@ import { and, eq } from 'drizzle-orm';
 
 import { format } from 'date-fns';
 import { CategoryColumn } from './columns';
-import Category from '@/app/(dashboard)/components/category';
+import Category from '@/app/(dashboard)/components/category/category';
 
 const CategoryPage = async ({
 	params,
 }: {
 	params: { storeId: string; dashboardId: string };
 }) => {
-	const { storeId, dashboardId } = await params;
+	const { storeId } = await params;
 
 	const data = await db.query.category.findMany({
-		where: and(
-			eq(category.storeId, storeId),
-			eq(category.dashboardId, dashboardId)
-		),
+		where: and(eq(category.storeId, storeId)),
 		with: {
 			dashboard: true,
 		},

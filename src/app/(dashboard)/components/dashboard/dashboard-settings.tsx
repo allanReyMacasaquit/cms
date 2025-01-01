@@ -124,10 +124,10 @@ const DashboardSettings = ({ initialData }: Props) => {
 				toast.error('Error deleting dashboard:', response.data);
 			}
 		} catch (error) {
-			console.error('Failed to delete dashboard:', error);
-			toast.error(
-				'An error occurred while deleting the dashboard. Delete all Categories first!'
-			);
+			if (error)
+				toast.error(
+					'An error occurred while deleting the dashboard. Delete all Categories first!'
+				);
 		} finally {
 			setLoading(false);
 			setOpen(false);

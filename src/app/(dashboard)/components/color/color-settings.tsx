@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { SelectSize } from '@/app/schema';
+import { SelectColor } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
@@ -29,71 +29,74 @@ const settingsSchema = z.object({
 	value: z.string().nonempty('Value is Required'),
 });
 
-type SizeFormValues = z.infer<typeof settingsSchema>;
+type ColorFormValues = z.infer<typeof settingsSchema>;
 
 interface Props {
-	initialData: SelectSize;
+	initialData: SelectColor;
 }
 
 // Settings Form Component
 const SizeSettings = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
-	const [sizeData, setSizeData] = useState(initialData);
+	const [colorData, setColorData] = useState(initialData);
 	const params = useParams();
 	const router = useRouter();
 
-	const title = sizeData.storeId ? 'Edit Size' : 'Create Size';
+	const title = colorData.storeId ? 'Edit Color' : 'Create Color';
 
-	const form = useForm<SizeFormValues>({
+	const form = useForm<ColorFormValues>({
 		resolver: zodResolver(settingsSchema),
-		defaultValues: sizeData || {
+		defaultValues: colorData || {
 			name: '',
 			value: '',
 		},
 	});
 
 	useEffect(() => {
-		const fetchSize = async () => {
-			if (params.sizeId) {
+		const fetchColor = async () => {
+			if (params.colorId) {
 				setLoading(true);
 				try {
 					const response = await axios.get(
-						`/api/${params.storeId}/size/${params.sizeId}`
+						`/api/${params.storeId}/color/${params.colorId}`
 					);
-					setSizeData(response.data);
+					setColorData(response.data);
 					form.reset(response.data);
 					router.refresh();
 				} catch (error) {
-					if (error) toast.error('Failed to fetch size data.');
-					router.push(`/${params.storeId}/size`);
+					if (error) toast.error('Failed to fetch color data.');
+					router.push(`/${params.storeId}/color`);
 				} finally {
 					setLoading(false);
 				}
 			} else {
-				toast.error('No size ID provided.');
+				toast.error('No color ID provided.');
 			}
 		};
-		fetchSize();
-	}, [params.sizeId, params.storeId, form, router]);
+		fetchColor();
+	}, [params.colorId, params.storeId, form, router]);
 
-	const onSubmit = async (data: SizeFormValues) => {
+	const onSubmit = async (data: ColorFormValues) => {
 		setLoading(true);
 		try {
-			if (sizeData.storeId) {
-				await axios.patch(`/api/${params.storeId}/size/${params.sizeId}`, data);
+			if (colorData.storeId) {
+				await axios.patch(
+					`/api/${params.storeId}/color/${params.colorId}`,
+					data
+				);
 				toast.success('Size updated successfully.');
 				router.refresh();
-				router.push(`/${params.storeId}/size`);
+				router.push(`/${params.storeId}/color`);
 			} else {
 				// Create New Size
-				await axios.post(`/api/${params.storeId}/size`, data);
-				toast.success('New size created successfully.');
+				await axios.post(`/api/${params.storeId}/color`, data);
+				toast.success('New color created successfully.');
 				router.refresh();
-				router.push(`/${params.storeId}/size`);
+				router.push(`/${params.storeId}/color`);
 			}
 		} catch (error) {
-			if (error) toast.error('An error occurred while saving the size.');
+			if (error) toast.error('An error occurred while saving the color.');
 		} finally {
 			setLoading(false);
 		}
@@ -104,19 +107,19 @@ const SizeSettings = ({ initialData }: Props) => {
 		setLoading(true);
 		try {
 			const response = await axios.delete(
-				`/api/${params.storeId}/size/${params.sizeId}`
+				`/api/${params.storeId}/color/${params.colorId}`
 			);
 			if (response.status === 200) {
-				toast.success('Size deleted successfully');
+				toast.success('Color deleted successfully');
 				router.refresh();
 				router.push('/');
 			} else {
-				toast.error('Error deleting size:', response.data);
+				toast.error('Error deleting color:', response.data);
 			}
 		} catch (error) {
 			if (error)
 				toast.error(
-					'An error occurred while deleting the size. Delete all related items first!'
+					'An error occurred while deleting the color. Delete all related items first!'
 				);
 		} finally {
 			setLoading(false);
@@ -136,7 +139,7 @@ const SizeSettings = ({ initialData }: Props) => {
 			<div className='flex items-center justify-between max-w-5xl mx-auto'>
 				<Heading title={title} description='' />
 
-				{sizeData.storeId && (
+				{colorData.storeId && (
 					<Button
 						disabled={loading}
 						variant='destructive'

@@ -1,10 +1,10 @@
 import { db } from '@/app/db';
 import { eq } from 'drizzle-orm';
-import { dashboard } from '@/app/schema';
+import { dashboard, SelectDashboard } from '@/app/schema';
 import DashboardSettings from '@/app/(dashboard)/components/dashboard/dashboard-settings';
 
 interface Props {
-	params: typeof dashboard.$inferSelect;
+	params: SelectDashboard;
 }
 
 const DashBoardFormIdPage = async ({ params }: Props) => {

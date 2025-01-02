@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { category, dashboard } from '@/app/schema';
+import { SelectCategory, SelectDashboard } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
@@ -40,8 +40,8 @@ const settingsSchema = z.object({
 type CategoryFormValues = z.infer<typeof settingsSchema>;
 
 interface Props {
-	initialData: typeof category.$inferSelect;
-	dashboard: (typeof dashboard.$inferSelect)[];
+	initialData: SelectCategory;
+	dashboard: SelectDashboard[];
 }
 
 // Settings Form Component

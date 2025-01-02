@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { store } from '@/app/schema';
+import { SelectStore } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
@@ -33,7 +33,7 @@ const settingsSchema = z.object({
 type SettingsFormValues = z.infer<typeof settingsSchema>;
 
 interface Props {
-	initialData: typeof store.$inferSelect;
+	initialData: SelectStore;
 }
 
 // Settings Form Component

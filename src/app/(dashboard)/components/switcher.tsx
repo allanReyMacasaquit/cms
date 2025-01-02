@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { store } from '@/app/schema';
+import { SelectStore, store } from '@/app/schema';
 import { useParams, useRouter } from 'next/navigation';
 import { useStoreModal } from '@/hooks/use-store-modal';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ import {
 import { cn } from '@/lib/utils';
 
 type SwitcherProps = {
-	items: (typeof store.$inferSelect)[]; // Ensure this is the correct type
+	items: SelectStore[];
 };
 
 export function Switcher({ items = [] }: SwitcherProps) {

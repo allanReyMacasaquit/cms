@@ -1,16 +1,16 @@
 import { db } from '@/app/db';
 import { eq } from 'drizzle-orm';
-import { SelectSize, size } from '@/app/schema';
-import SizeSettings from '@/app/(dashboard)/components/size/size-settings';
+import { SelectColor, color } from '@/app/schema';
+import SizeSettings from '@/app/(dashboard)/components/color/color-settings';
 
 interface Props {
-	params: SelectSize;
+	params: SelectColor;
 }
 
 const SizeFormIdPage = async ({ params }: Props) => {
 	const { id } = await params;
-	const data = await db.query.size.findFirst({
-		where: eq(size.id, id), // Use the correct field name from the schema
+	const data = await db.query.color.findFirst({
+		where: eq(color.id, id), // Use the correct field name from the schema
 	});
 
 	const initialData = data

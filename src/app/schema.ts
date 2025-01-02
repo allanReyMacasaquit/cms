@@ -60,6 +60,43 @@ export const color = t.pgTable('color', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
+export const product = t.pgTable('product', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	name: t.varchar('name', { length: 255 }).notNull(),
+	price: t.decimal('price', { precision: 10, scale: 2 }).notNull(),
+	isFeatured: t.boolean().notNull().default(false),
+	isArchived: t.boolean().notNull().default(false),
+	storeId: t
+		.uuid('store_id')
+		.notNull()
+		.references(() => store.id),
+	category: t
+		.uuid('category_id')
+		.notNull()
+		.references(() => category.id),
+	size: t
+		.uuid('size_id')
+		.notNull()
+		.references(() => size.id),
+	color: t
+		.uuid('color_id')
+		.notNull()
+		.references(() => color.id),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
+
+export const image = t.pgTable('image', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	url: t.varchar('url', { length: 255 }).notNull(),
+	productId: t
+		.uuid('product_id')
+		.notNull()
+		.references(() => product.id, { onDelete: 'cascade' }),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
+
 export const categoryRelations = relations(category, ({ one }) => ({
 	dashboard: one(dashboard, {
 		fields: [category.dashboardId],
@@ -82,3 +119,6 @@ export type SelectSize = typeof size.$inferSelect;
 
 export type InsertColor = typeof color.$inferInsert;
 export type SelectColor = typeof color.$inferSelect;
+
+export type InsertProduct = typeof product.$inferInsert;
+export type SelectProduct = typeof product.$inferSelect;

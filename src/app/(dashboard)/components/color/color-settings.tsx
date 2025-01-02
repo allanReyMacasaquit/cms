@@ -7,7 +7,7 @@ import { SelectColor } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Save, Trash } from 'lucide-react';
+import { Check, Save, Trash } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
 	Form,
@@ -22,11 +22,23 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
 import AlertModal from '@/components/modals/alert-modal';
+import {
+	Select,
+	SelectContent,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import Sketch from '@uiw/react-color-sketch';
 
 // Zod Schema
 const settingsSchema = z.object({
 	name: z.string().nonempty('Name is required'),
-	value: z.string().nonempty('Value is Required'),
+	value: z
+		.string()
+		.min(4)
+		.regex(/^#[0-9A-Fa-f]{6}$/, {
+			message: 'Must be a valid 6-character hex code (e.g., #FFFFFF)',
+		}),
 });
 
 type ColorFormValues = z.infer<typeof settingsSchema>;
@@ -39,6 +51,7 @@ interface Props {
 const SizeSettings = ({ initialData }: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [hex, setHex] = useState('#fff');
 	const [colorData, setColorData] = useState(initialData);
 	const params = useParams();
 	const router = useRouter();
@@ -126,7 +139,11 @@ const SizeSettings = ({ initialData }: Props) => {
 			setOpen(false);
 		}
 	};
-
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const handleColorChange = (color: any) => {
+		setHex(color.hex);
+		form.setValue('value', color.hex);
+	};
 	return (
 		<>
 			<AlertModal
@@ -193,9 +210,34 @@ const SizeSettings = ({ initialData }: Props) => {
 							name='value'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Value</FormLabel>
+									<FormLabel>Hex Color</FormLabel>
+									{hex === '#fff' ? (
+										''
+									) : (
+										<span className='flex items-center'>
+											{hex} selected (<Check className='text-green-500' />)
+										</span>
+									)}
 									<FormControl>
-										<Input placeholder='Enter Value' {...field} />
+										<Select>
+											<SelectTrigger>
+												<SelectValue
+													defaultValue={field.value}
+													placeholder='Select a Color'
+													className='w-[310px]'
+													aria-expanded={Boolean(field.value)}
+												/>
+											</SelectTrigger>
+											<SelectContent>
+												<div>
+													<Sketch
+														style={{ marginLeft: 20 }}
+														color={hex}
+														onChange={handleColorChange}
+													/>
+												</div>
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

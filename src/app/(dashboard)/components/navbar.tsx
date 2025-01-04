@@ -69,7 +69,7 @@ const Navbar = async () => {
 									<VisuallyHidden>
 										<SheetTitle>Nav Content</SheetTitle>
 									</VisuallyHidden>
-									{/* Corrected Container */}
+
 									<div className='flex flex-col items-center justify-between h-[300px]'>
 										<Switcher items={stores} />
 									</div>

@@ -60,6 +60,13 @@ export const color = t.pgTable('color', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
+export const categoryRelations = relations(category, ({ one }) => ({
+	dashboard: one(dashboard, {
+		fields: [category.dashboardId],
+		references: [dashboard.id],
+	}),
+}));
+
 export const product = t.pgTable('product', {
 	id: t.uuid('id').defaultRandom().primaryKey(),
 	name: t.varchar('name', { length: 255 }).notNull(),
@@ -70,15 +77,15 @@ export const product = t.pgTable('product', {
 		.uuid('store_id')
 		.notNull()
 		.references(() => store.id),
-	category: t
+	categoryId: t
 		.uuid('category_id')
 		.notNull()
 		.references(() => category.id),
-	size: t
+	sizeId: t
 		.uuid('size_id')
 		.notNull()
 		.references(() => size.id),
-	color: t
+	colorId: t
 		.uuid('color_id')
 		.notNull()
 		.references(() => color.id),
@@ -97,10 +104,27 @@ export const image = t.pgTable('image', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
-export const categoryRelations = relations(category, ({ one }) => ({
-	dashboard: one(dashboard, {
-		fields: [category.dashboardId],
-		references: [dashboard.id],
+export const productRelations = relations(product, ({ one, many }) => ({
+	category: one(category, {
+		fields: [product.categoryId],
+		references: [category.id],
+	}),
+	color: one(color, {
+		fields: [product.colorId],
+		references: [color.id],
+	}),
+	size: one(size, {
+		fields: [product.sizeId],
+		references: [size.id],
+	}),
+
+	images: many(image),
+}));
+
+export const imageRelations = relations(image, ({ one }) => ({
+	product: one(product, {
+		fields: [image.productId],
+		references: [product.id],
 	}),
 }));
 
@@ -122,3 +146,6 @@ export type SelectColor = typeof color.$inferSelect;
 
 export type InsertProduct = typeof product.$inferInsert;
 export type SelectProduct = typeof product.$inferSelect;
+
+export type InsertImage = typeof image.$inferInsert;
+export type SelectImage = typeof image.$inferSelect;

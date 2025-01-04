@@ -28,7 +28,7 @@ import { Textarea } from '@/components/ui/textarea';
 // Zod Schema
 const settingsSchema = z.object({
 	label: z.string().nonempty('Name is required'),
-	description: z.string().nonempty('Description is Required'),
+	description: z.string().max(255, 'Text cannot exceed 100 characters'),
 	imageUrl: z.string().nonempty('Image is Required'),
 });
 

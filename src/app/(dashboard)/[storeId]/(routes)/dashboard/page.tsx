@@ -14,6 +14,7 @@ const DashboardPage = async ({ params }: { params: { storeId: string } }) => {
 	const formattedData: DashboardColumn[] = data.map((item) => ({
 		id: item.id,
 		label: item.label,
+		description: item.description,
 		createdAt: item.createdAt ? format(item.createdAt, 'MMM do, yyyy') : 'N/A',
 	}));
 	return (

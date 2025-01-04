@@ -1,7 +1,5 @@
-'use client';
-
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import { CldUploadWidget } from 'next-cloudinary';
 import { Button } from './ui/button';
 import { ImagePlus, Trash } from 'lucide-react';
@@ -10,7 +8,7 @@ interface ImageUploadProps {
 	disabled?: boolean;
 	onChange: (value: string) => void;
 	onRemove: (value: string) => void;
-	value: string[];
+	value: { url: string }[];
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -26,8 +24,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 	}, []);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const onUpload = (result: any) => {
-		if (result.event === 'success') {
+	const handleUpload = (result: any) => {
+		if (result.event === 'success' && result.info.secure_url) {
 			onChange(result.info.secure_url);
 		}
 	};
@@ -39,41 +37,48 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 	return (
 		<div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-				{value.map((url) => (
+				{value.map((imageObj, index) => (
 					<div
-						key={url}
-						className='relative w-[400px] h-[250px] rounded-md overflow-hidden'
+						key={index}
+						className='relative w-[320px] h-[180px] rounded-md overflow-hidden'
 					>
-						<div className='z-50 absolute top-2 right-2'>
+						<div className='absolute top-2 right-2 z-50'>
 							<Button
 								variant='destructive'
 								type='button'
-								onClick={() => onRemove(url)}
+								onClick={() => onRemove(imageObj.url)}
 							>
 								<Trash className='size-10' />
 							</Button>
 						</div>
-						<Image src={url} height={400} width={400} priority alt='Uploaded' />
+						<Image
+							src={imageObj.url}
+							alt='Uploaded'
+							height={400}
+							width={400}
+							className='object-cover rounded-md'
+						/>
 					</div>
 				))}
 			</div>
+
 			<CldUploadWidget
 				uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME}
-				onSuccess={onUpload}
+				onSuccess={handleUpload}
 			>
 				{({ open }) => {
-					const onClick = () => {
+					const handleClick = () => {
 						open();
 					};
 					return (
 						<Button
-							className='md:mt-4'
+							className='bg-slate-600 mt-2'
 							type='button'
 							disabled={disabled}
-							onClick={onClick}
+							onClick={handleClick}
 						>
 							<ImagePlus className='size-10' />
-							Background Image
+							Upload Images
 						</Button>
 					);
 				}}

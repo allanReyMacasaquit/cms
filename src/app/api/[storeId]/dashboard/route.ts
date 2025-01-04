@@ -10,7 +10,7 @@ export async function POST(
 	{ params }: { params: { storeId: string } }
 ) {
 	try {
-		const { storeId } = params;
+		const { storeId } = await params;
 		if (!storeId) {
 			return new NextResponse('Store ID is required', { status: 400 });
 		}

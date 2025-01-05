@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { CldUploadWidget } from 'next-cloudinary';
 import { Button } from './ui/button';
 import { ImagePlus, Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
 
 interface ImageUploadProps {
 	disabled?: boolean;
@@ -31,44 +30,34 @@ const ProductUpload: React.FC<ImageUploadProps> = ({
 		}
 	};
 
-	const handleDelete = (imageUrl: string) => {
-		if (value.length > 1) {
-			onRemove(imageUrl);
-		} else {
-			toast.error('Cannot delete the last remaining image.');
-		}
-	};
-
 	if (!isMounted) {
 		return null;
 	}
 
 	return (
 		<div>
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
 				{value.map((imageObj, index) => (
 					<div
 						key={index}
 						className='relative w-[320px] h-[180px] rounded-md overflow-hidden'
 					>
-						{index > 0 && (
-							<div className='absolute top-2 right-2 z-50'>
-								<Button
-									variant='destructive'
-									type='button'
-									onClick={() => handleDelete(imageObj.url)}
-								>
-									<Trash className='size-10' />
-								</Button>
-							</div>
-						)}
+						<div className='absolute top-2 right-2 z-50'>
+							<Button
+								variant='destructive'
+								type='button'
+								onClick={() => onRemove(imageObj.url)}
+							>
+								<Trash className='size-10' />
+							</Button>
+						</div>
 						<Image
 							src={imageObj.url}
-							alt='Uploaded'
 							fill
 							sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 							priority
 							className='object-cover rounded-md'
+							alt='Uploaded'
 						/>
 					</div>
 				))}

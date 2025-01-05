@@ -14,6 +14,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
 			category: true,
 			size: true,
 			color: true,
+			productName: true,
 		},
 	});
 
@@ -22,6 +23,7 @@ const ProductPage = async ({ params }: { params: { storeId: string } }) => {
 		name: item.name,
 		priceId: formattedPrice.format(Number(item.price)),
 		categoryId: item.category.name,
+		productNameId: item.productName.name,
 		sizeId: item.size.name,
 		colorId: item.color.value,
 		isFeatured: item.isFeatured,

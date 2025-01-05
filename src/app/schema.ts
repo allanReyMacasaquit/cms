@@ -93,7 +93,7 @@ export const product = t.pgTable('product', {
 		.notNull()
 		.references(() => category.id),
 	productNameId: t
-		.uuid('color_id')
+		.uuid('product_name_id')
 		.notNull()
 		.references(() => productName.id),
 	sizeId: t

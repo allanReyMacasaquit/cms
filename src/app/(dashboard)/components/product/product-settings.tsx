@@ -8,12 +8,13 @@ import {
 	SelectColor,
 	SelectImage,
 	SelectProduct,
+	SelectProductName,
 	SelectSize,
 } from '@/app/schema';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Save, Trash } from 'lucide-react';
+import { Save, SeparatorVerticalIcon, Trash } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
 	Form,
@@ -46,6 +47,7 @@ const settingsSchema = z.object({
 	name: z.string().nonempty('Product Name is required'),
 	price: z.coerce.number().min(1, 'Price must be a positive number'),
 	categoryId: z.string().min(1, 'Category Name is required'),
+	productNameId: z.string().min(1, 'Product Name Id is required'),
 	sizeId: z.string().min(1, 'Size is required'),
 	colorId: z.string().min(1, 'Color is required'), // Fixed from 'color' to 'colorId' for consistency
 	images: z.object({ url: z.string() }).array().nonempty(),
@@ -62,10 +64,17 @@ interface Props {
 	category: SelectCategory[];
 	size: SelectSize[];
 	color: SelectColor[];
+	productName: SelectProductName[];
 }
 
 // Settings Form Component
-const ProductSettings = ({ initialData, category, size, color }: Props) => {
+const ProductSettings = ({
+	initialData,
+	category,
+	size,
+	color,
+	productName,
+}: Props) => {
 	const [loading, setLoading] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [productData, setDashboardData] = useState(initialData);
@@ -82,6 +91,7 @@ const ProductSettings = ({ initialData, category, size, color }: Props) => {
 					name: '',
 					price: 0,
 					categoryId: '',
+					productNameId: '',
 					sizeId: '',
 					colorId: '',
 					isFeatured: false,
@@ -251,27 +261,9 @@ const ProductSettings = ({ initialData, category, size, color }: Props) => {
 							name='name'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>Store Name</FormLabel>
 									<FormControl>
-										<Input placeholder='Product Name' {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='price'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Price</FormLabel>
-									<FormControl>
-										<Input
-											type='number'
-											placeholder='9.99'
-											{...field}
-											value={field.value || ''}
-										/>
+										<Input placeholder=' Store Name' {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -312,6 +304,64 @@ const ProductSettings = ({ initialData, category, size, color }: Props) => {
 										</Select>
 										<FormMessage />
 									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='productNameId'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Product Name</FormLabel>
+									<div>
+										<Select
+											value={field.value}
+											onValueChange={field.onChange}
+											disabled={loading}
+										>
+											<FormControl>
+												<SelectTrigger
+													className='w-[310px]'
+													aria-expanded={Boolean(field.value)}
+												>
+													<SelectValue
+														defaultValue={field.value}
+														placeholder='Select a Product name'
+													/>
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectGroup>
+													{productName.map((item) => (
+														<SelectItem value={item.id} key={item.id}>
+															{item.name}
+														</SelectItem>
+													))}
+												</SelectGroup>
+											</SelectContent>
+										</Select>
+										<FormMessage />
+									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='price'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Price</FormLabel>
+									<FormControl>
+										<div className='bg-slate-100'>
+											<Input
+												type='number'
+												placeholder='9.99'
+												{...field}
+												value={field.value || ''}
+											/>
+										</div>
+									</FormControl>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>
@@ -393,7 +443,9 @@ const ProductSettings = ({ initialData, category, size, color }: Props) => {
 								</FormItem>
 							)}
 						/>
-
+					</div>
+					<Separator className='max-w-5xl mx-auto mt-8' />
+					<div className='md:flex items-center justify-between mt-8 bg-slate-100 p-4 rounded'>
 						<FormField
 							control={form.control}
 							name='isFeatured'
@@ -415,6 +467,8 @@ const ProductSettings = ({ initialData, category, size, color }: Props) => {
 								</FormItem>
 							)}
 						/>
+						<SeparatorVerticalIcon size={20} className='mx-4 hidden md:flex' />
+
 						<FormField
 							control={form.control}
 							name='isArchived'

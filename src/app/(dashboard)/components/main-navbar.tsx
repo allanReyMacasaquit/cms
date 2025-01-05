@@ -28,6 +28,11 @@ export function MainNav({
 			active: pathname === `/${params.storeId}/category`,
 		},
 		{
+			href: `/${params.storeId}/product-name`,
+			label: 'ProductName',
+			active: pathname === `/${params.storeId}/product-name`,
+		},
+		{
 			href: `/${params.storeId}/size`,
 			label: 'Size',
 			active: pathname === `/${params.storeId}/size`,
@@ -37,6 +42,7 @@ export function MainNav({
 			label: 'Color',
 			active: pathname === `/${params.storeId}/color`,
 		},
+
 		{
 			href: `/${params.storeId}/product`,
 			label: 'Product',

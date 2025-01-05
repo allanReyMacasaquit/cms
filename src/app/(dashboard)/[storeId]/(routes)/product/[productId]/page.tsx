@@ -1,6 +1,13 @@
 import { db } from '@/app/db';
 import { eq } from 'drizzle-orm';
-import { category, color, product, SelectProduct, size } from '@/app/schema';
+import {
+	category,
+	color,
+	product,
+	productName,
+	SelectProduct,
+	size,
+} from '@/app/schema';
 import ProductSettings from '@/app/(dashboard)/components/product/product-settings';
 
 interface Props {
@@ -23,6 +30,7 @@ const ProductFormIdPage = async ({ params }: Props) => {
 				price: data.price,
 				storeId: data.storeId,
 				categoryId: data.categoryId,
+				productNameId: data.productNameId,
 				sizeId: data.sizeId,
 				colorId: data.colorId,
 				images: Array.isArray(data.images)
@@ -45,6 +53,7 @@ const ProductFormIdPage = async ({ params }: Props) => {
 				price: '',
 				storeId: '',
 				categoryId: '',
+				productNameId: '',
 				sizeId: '',
 				colorId: '',
 				images: [],
@@ -56,6 +65,10 @@ const ProductFormIdPage = async ({ params }: Props) => {
 
 	const categoryData = await db.query.category.findMany({
 		where: eq(category.storeId, storeId),
+	});
+
+	const ProductNameData = await db.query.productName.findMany({
+		where: eq(productName.storeId, storeId),
 	});
 
 	const sizeData = await db.query.size.findMany({
@@ -73,6 +86,7 @@ const ProductFormIdPage = async ({ params }: Props) => {
 					category={categoryData}
 					size={sizeData}
 					color={colorData}
+					productName={ProductNameData}
 					initialData={initialData}
 				/>
 			</div>

@@ -11,7 +11,7 @@ interface PatchRequestBody {
 	categoryId: string;
 	sizeId: string;
 	colorId: string;
-	images: { url: string }[]; // Ensure images are an array of objects with `url` property
+	images: { url: string }[];
 	isFeatured?: boolean;
 	isArchived?: boolean;
 }
@@ -68,7 +68,7 @@ export async function PATCH(
 		}
 
 		// Validate params
-		const { productId, storeId } = params;
+		const { productId, storeId } = await params;
 		if (!productId || !storeId) {
 			return NextResponse.json(
 				{ success: false, message: 'Product ID and Store ID are required' },
@@ -250,70 +250,5 @@ export async function GET(
 	} catch (error) {
 		console.error('[PRODUCTS_GET]', error);
 		return new NextResponse('Internal Error', { status: 500 });
-	}
-}
-
-export async function DELETE_IMAGE(
-	req: Request,
-	{
-		params,
-	}: { params: { storeId: string; productId: string; imageId: string } }
-) {
-	try {
-		// Authenticate the user
-		const { userId } = await auth();
-		if (!userId) {
-			return NextResponse.json(
-				{ success: false, message: 'Unauthenticated' },
-				{ status: 401 }
-			);
-		}
-		const { storeId, productId, imageId } = params;
-
-		// Validate store ID and product ID
-		if (!storeId || !productId || !imageId) {
-			return NextResponse.json(
-				{ success: false, message: 'Invalid parameters' },
-				{ status: 400 }
-			);
-		}
-
-		const storeByUserId = await db.query.store.findFirst({
-			where: eq(store.id, storeId),
-		});
-
-		if (!storeByUserId) {
-			return new NextResponse('Unauthorized', { status: 403 });
-		}
-
-		// Delete the image from the database
-		const deletedImage = await db
-			.delete(image)
-			.where(and(eq(image.productId, productId), eq(image.id, imageId)));
-
-		// Handle case where Image is not found
-		if (!deletedImage) {
-			return NextResponse.json(
-				{ success: false, message: 'Image not found' },
-				{ status: 404 }
-			);
-		}
-
-		// Return success response
-		return NextResponse.json(
-			{
-				success: true,
-				message: 'Image deleted successfully',
-				data: deletedImage,
-			},
-			{ status: 200 }
-		);
-	} catch (error) {
-		// Log and return error response
-		console.error('[Image_DELETE]', error);
-		return NextResponse.json(
-			{ success: false, message: 'Internal error' },
-			{ status: 500 }
-		);
 	}
 }

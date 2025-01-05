@@ -10,7 +10,7 @@ export async function POST(
 	{ params }: { params: { storeId: string } }
 ) {
 	try {
-		const { storeId } = params;
+		const { storeId } = await params;
 
 		// Validate `storeId`
 		if (!storeId) {
@@ -30,6 +30,7 @@ export async function POST(
 			price,
 			colorId,
 			categoryId,
+			productNameId,
 			sizeId,
 			images,
 			isFeatured = false,
@@ -42,6 +43,8 @@ export async function POST(
 			return new NextResponse('Color ID is required', { status: 400 });
 		if (!categoryId)
 			return new NextResponse('Category ID is required', { status: 400 });
+		if (!productNameId)
+			return new NextResponse('Product Name ID is required', { status: 400 });
 		if (!sizeId)
 			return new NextResponse('Size ID is required', { status: 400 });
 		if (!images || !images.length)
@@ -67,6 +70,7 @@ export async function POST(
 				price,
 				storeId,
 				categoryId,
+				productNameId,
 				sizeId,
 				colorId,
 				isFeatured,
@@ -90,11 +94,11 @@ export async function POST(
 		// Construct response data
 		const responseData = {
 			product: newProduct,
-			images: images.map((url: string) => ({ url })),
+			images,
 		};
 
 		// Log the response data
-		console.log('[Product_POST] Response Data:', responseData);
+		console.log('[Product_POST] Response Data:', responseData.images);
 
 		// Return the response
 		return new NextResponse(JSON.stringify(responseData), {
@@ -112,7 +116,7 @@ export async function GET(
 	{ params }: { params: { storeId: string; productId?: string } }
 ) {
 	try {
-		const { storeId, productId } = params;
+		const { storeId, productId } = await params;
 
 		// Validate store ID
 		if (!storeId) {
@@ -124,7 +128,7 @@ export async function GET(
 			const productData = await db.query.product.findFirst({
 				where: eq(product.id, productId),
 				with: {
-					images: true, // Fetch related images
+					images: true,
 				},
 			});
 
@@ -139,7 +143,7 @@ export async function GET(
 		const products = await db.query.product.findMany({
 			where: eq(product.storeId, storeId),
 			with: {
-				images: true, // Fetch related images for all products
+				images: true,
 			},
 		});
 		console.log(

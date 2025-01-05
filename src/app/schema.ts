@@ -119,6 +119,51 @@ export const image = t.pgTable('image', {
 	updatedAt: t.timestamp('updated_at').defaultNow(),
 });
 
+// Order table
+export const order = t.pgTable('order', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	storeId: t
+		.uuid('store_id')
+		.notNull()
+		.references(() => store.id),
+	phone: t.varchar('phone', { length: 255 }).notNull(),
+	address: t.varchar('address', { length: 255 }).notNull(),
+	isPaid: t.boolean().notNull().default(false),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
+
+// OrderItem table
+export const orderItem = t.pgTable('order-item', {
+	id: t.uuid('id').defaultRandom().primaryKey(),
+	orderId: t
+		.uuid('order_id')
+		.notNull()
+		.references(() => order.id),
+	productId: t
+		.uuid('product_id')
+		.notNull()
+		.references(() => product.id),
+	createdAt: t.timestamp('created_at').defaultNow(),
+	updatedAt: t.timestamp('updated_at').defaultNow(),
+});
+
+// Define the relationships
+export const OrderRelations = relations(order, ({ many }) => ({
+	orderItem: many(orderItem),
+}));
+
+export const OrderItemRelations = relations(orderItem, ({ one }) => ({
+	order: one(order, {
+		fields: [orderItem.orderId],
+		references: [order.id],
+	}),
+	product: one(product, {
+		fields: [orderItem.productId],
+		references: [product.id],
+	}),
+}));
+
 export const productRelations = relations(product, ({ one, many }) => ({
 	category: one(category, {
 		fields: [product.categoryId],
@@ -170,3 +215,9 @@ export type SelectImage = typeof image.$inferSelect;
 
 export type InsertProductName = typeof productName.$inferInsert;
 export type SelectProductName = typeof productName.$inferSelect;
+
+export type InsertOrder = typeof order.$inferInsert;
+export type SelectOrder = typeof order.$inferSelect;
+
+export type InsertOrderItem = typeof orderItem.$inferInsert;
+export type SelectOrderItem = typeof orderItem.$inferSelect;
